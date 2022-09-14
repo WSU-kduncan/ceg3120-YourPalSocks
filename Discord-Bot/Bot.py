@@ -1,16 +1,18 @@
 # Starter code provided by: https://github.com/pattonsgirl/Fall2022-CEG3120/blob/main/Projects/Project1/bot.py
 
 import os
-
-import discord
 import random
-from dotenv import load_dotenv
 from datetime import datetime
 
+import discord
+from dotenv import load_dotenv
+
+# Get token info
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
+# Set intents -- kinda dumb but whatevs
 intents = discord.Intents.default()
 intents.message_content = True
 
