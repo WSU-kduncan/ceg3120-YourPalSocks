@@ -2,6 +2,8 @@
 ### Ethan Heinlein
 A simple discord bot that posts various text and image messages via different commands. Built on the discord python library v2.0.1
 
+(btw the branch made for this project is the "discord-bot-v1" branch.)
+
 ---
 ## Dependencies
 - Python3
