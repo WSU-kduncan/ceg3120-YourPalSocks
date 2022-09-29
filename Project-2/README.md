@@ -13,6 +13,9 @@
 
 ## Part 2 - EC2 Instances
 1. Create a new instance
+
+I chose Ubuntu as my AMI. Default username chosen.
+
 2. Attach the instance to the VPC
 
 I attached it by changing the network settings in the EC2 instance creator
