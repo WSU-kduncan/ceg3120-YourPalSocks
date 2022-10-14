@@ -134,7 +134,7 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !Ref Subnet
-          PrivateIpAddress: 10.0.0.67 # Changed to be within subet
+          PrivateIpAddress: 10.0.0.9 # Changed to be within subnet
       UserData:
         Fn::Base64:
           !Sub |
