@@ -40,7 +40,7 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.1.0/24 # Private Subnet range
+      CidrBlock: 10.0.1.2/24 # Private Subnet range
       Tags:
         - Key: Application
           Value: !Ref 'AWS::StackId'
@@ -140,7 +140,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: '22'
           ToPort: '22'
-          CidrIp: 0.0.0.0/32  # TODO Replace with home / trusted public IP
+          CidrIp: 74.131.40.222/32  # Home CIDR
         - IpProtocol: tcp
           FromPort: '80'
           ToPort: '80'
@@ -179,7 +179,7 @@ Resources:
           !Sub |
             #!/bin/bash -xe
             apt-get update && \
-            apt-get install haproxy && \
+            apt-get install -y haproxy && \
             apt-get install -y git python3 python3-pip && \
             hostnamectl set-hostname proxy && \
             reboot
@@ -208,49 +208,48 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !Ref PrivateSubnet
-          PrivateIpAddress: 10.0.1.10 # TODO make sure unique to the instance
+          PrivateIpAddress: 10.0.1.10
       UserData:
         Fn::Base64:
           !Sub |
             #!/bin/bash -xe
             apt-get update && \
-            apt-get install apache2 && \
+            apt-get install -y apache2 && \
             apt-get install -y git && \
-            hostnamectl set-hostname webserv1
+            hostnamectl set-hostname webserv1 && \
             reboot
-
-WebServ2Instance:
-    Type: 'AWS::EC2::Instance'
-    DependsOn: NATGateway
-    Properties:
-      ImageId: !FindInMap 
-        - AWSRegionUbuntu
-        - !Ref 'AWS::Region'
-        - !FindInMap 
-          - AWSInstanceType2Arch
-          - t2.micro
-          - Arch
-      InstanceType: t2.micro
-      KeyName: !Ref KeyName
-      Tags:
-        - Key: Application
-          Value: !Ref 'AWS::StackId'
-        - Key: Name
-          Value: webserv2
-      NetworkInterfaces:
-        - GroupSet:
-            - !Ref SecurityGroup
-          AssociatePublicIpAddress: 'false'
-          DeviceIndex: '0'
-          DeleteOnTermination: 'true'
-          SubnetId: !Ref PrivateSubnet
-          PrivateIpAddress: 10.0.1.20 # TODO make sure unique to the instance
-      UserData:
-        Fn::Base64:
-          !Sub |
-            #!/bin/bash -xe
-            apt-get update && \
-            apt-get install apache2 && \
-            apt-get install -y git && \
-            hostnamectl set-hostname webserv2
-            reboot
+  WebServ2Instance:
+      Type: 'AWS::EC2::Instance'
+      DependsOn: NATGateway
+      Properties:
+        ImageId: !FindInMap 
+          - AWSRegionUbuntu
+          - !Ref 'AWS::Region'
+          - !FindInMap 
+            - AWSInstanceType2Arch
+            - t2.micro
+            - Arch
+        InstanceType: t2.micro
+        KeyName: !Ref KeyName
+        Tags:
+          - Key: Application
+            Value: !Ref 'AWS::StackId'
+          - Key: Name
+            Value: webserv2
+        NetworkInterfaces:
+          - GroupSet:
+              - !Ref SecurityGroup
+            AssociatePublicIpAddress: 'false'
+            DeviceIndex: '0'
+            DeleteOnTermination: 'true'
+            SubnetId: !Ref PrivateSubnet
+            PrivateIpAddress: 10.0.1.20
+        UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash -xe
+              apt-get update && \
+              apt-get install -y apache2 && \
+              apt-get install -y git && \
+              hostnamectl set-hostname webserv2 && \
+              reboot
